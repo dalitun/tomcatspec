@@ -65,7 +65,7 @@ cp -R * %{buildroot}/%{tomcat_home}/
 cat <<BANNER
 ----------------------------------------------------------------------
 
-Thank you for using ulyaoth-tomcat8.5-docs!
+Thank you for using tomcat8.5-docs!
 
 Please find the official documentation for tomcat here:
 * https://tomcat.apache.org/
@@ -75,5 +75,5 @@ Please find the official documentation for tomcat here:
 BANNER
 
 %changelog
-* Sat Nov 28 2015 Sjir Bagmeijer <sbagmeijer@ulyaoth.net>8.5.32-1
+* Sat Nov 28 2015 your name <your email>8.5.32-1
 - Initial release for Tomcat 8.5.32

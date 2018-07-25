@@ -1,6 +1,7 @@
 #!/bin/bash
-# This script is supposed to run as the user "ulyaoth".
-
+# This script is supposed to run as the user $USER .
+sudo yum install -y java-1.8.0-openjdk-devel
+sudo yum install -y rpmdevtools rpmlint
 # Clean repository because AMI could have old data.
 if type dnf 2>/dev/null
 then

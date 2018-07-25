@@ -1,12 +1,14 @@
-You can create the packages as following:
+#You can create the packages as following:
 
 
-tomcat8.5:
-wget https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-tomcat/build-tomcat8.5.sh ; chmod +x build-tomcat8.5.sh ; ./build-tomcat8.5.sh
-
-tomcat9:
-wget https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-tomcat/build-tomcat9.sh ; chmod +x build-tomcat9.sh ; ./build-tomcat9.sh
-
+##tomcat8.5:
+~~~
+chmod +x build-tomcat8.5.sh ; ./build-tomcat8.5.sh
+~~~
+##tomcat9:
+~~~
+chmod +x build-tomcat9.sh ; ./build-tomcat9.sh
+~~~
 This should give you the following packages:
 tomcat
 tomcat-admin

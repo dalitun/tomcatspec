@@ -76,5 +76,5 @@ Please find the official documentation for tomcat here:
 BANNER
 
 %changelog
-* Sat Nov 28 2015 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-1
-- Initial release for Tomcat 9.0.0.M1.
+* Sat Nov 28 2015 your name <your email> 8.5.32-1
+- Initial release for Tomcat 8.5.32.
