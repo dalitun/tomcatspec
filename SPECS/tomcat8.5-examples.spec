@@ -6,7 +6,7 @@
 %define tomcat_user tomcat
 
 Summary:    Apache Servlet/JSP Engine
-Name:       ulyaoth-tomcat8.5-examples
+Name:       tomcat8.5-examples
 Version:    8.5.32
 Release:    1%{?dist}
 BuildArch: x86_64
