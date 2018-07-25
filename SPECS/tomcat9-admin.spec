@@ -18,12 +18,12 @@ Packager:   Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net>
 Source0:    http://apache.mirrors.spacedump.net/tomcat/tomcat-9/v%{version}/bin/apache-tomcat-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires: ulyaoth-tomcat9
+Requires: tomcat9
 
 Provides: tomcat-admin
 Provides: apache-tomcat-admin
-Provides: ulyaoth-tomcat-admin
-Provides: ulyaoth-tomcat9-admin
+Provides: tomcat-admin
+Provides: tomcat9-admin
 
 %description
 The package contains the official Apache Tomcat "webapps/manager" and "webapps/host-manager" directories.
