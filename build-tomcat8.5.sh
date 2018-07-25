@@ -29,10 +29,10 @@ then
 fi
 
 # Download additional files specified in spec file.
-spectool ~/rpmbuild/SPECS/ulyaoth-tomcat8.5.spec -g -R
+spectool ~/rpmbuild/SPECS/tomcat8.5.spec -g -R
 
 # Build the rpm.
-rpmbuild -ba ~/rpmbuild/SPECS/ulyaoth-tomcat8.5.spec
-rpmbuild -ba ~/rpmbuild/SPECS/ulyaoth-tomcat8.5-admin.spec
-rpmbuild -ba ~/rpmbuild/SPECS/ulyaoth-tomcat8.5-docs.spec
-rpmbuild -ba ~/rpmbuild/SPECS/ulyaoth-tomcat8.5-examples.spec
+rpmbuild -ba ~/rpmbuild/SPECS/tomcat8.5.spec
+rpmbuild -ba ~/rpmbuild/SPECS/tomcat8.5-admin.spec
+rpmbuild -ba ~/rpmbuild/SPECS/tomcat8.5-docs.spec
+rpmbuild -ba ~/rpmbuild/SPECS/tomcat8.5-examples.spec
