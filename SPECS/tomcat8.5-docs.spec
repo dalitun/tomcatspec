@@ -18,12 +18,12 @@ Packager:   unkown@peaceofmind.com
 Source0:    http://www.us.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires: ulyaoth-tomcat8.5
+Requires: tomcat8.5
 
 Provides: tomcat-docs
 Provides: apache-tomcat-docs
-Provides: ulyaoth-tomcat-docs
-Provides: ulyaoth-tomcat8.5-docs
+Provides: tomcat-docs
+Provides: tomcat8.5-docs
 
 %description
 The package contains the official Apache Tomcat "webapps/docs" directory.
