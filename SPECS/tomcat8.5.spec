@@ -39,9 +39,8 @@ URL:        https://tomcat.apache.org/
 Vendor:     Apache Software Foundation
 Packager:   unkown@peaceofmind.com
 Source0:    http://www.us.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
-Source1:    https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-tomcat/SOURCES/tomcat.service
-Source2:    https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-tomcat/SOURCES/tomcat.init
-Source3:    https://raw.githubusercontent.com/ulyaoth/repository/master/ulyaoth-tomcat/SOURCES/tomcat.logrotate
+Source1:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat.service
+Source2:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat.logrotate
 BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Provides: tomcat
@@ -79,16 +78,11 @@ cd -
 %{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
 %{__install} -m644 %SOURCE1 \
         $RPM_BUILD_ROOT%{_unitdir}/tomcat.service
-%else
-# install SYSV init stuff
-%{__mkdir} -p $RPM_BUILD_ROOT%{_initrddir}
-%{__install} -m755 %{SOURCE2} \
-   $RPM_BUILD_ROOT%{_initrddir}/tomcat
 %endif
 
 # install log rotation stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-%{__install} -m 644 -p %{SOURCE3} \
+%{__install} -m 644 -p %{SOURCE2} \
    $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/tomcat
 
 # Clean webapps
