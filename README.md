@@ -1,11 +1,11 @@
-#You can create the packages as following:
+# You can create the packages as following:
 
 
-##tomcat8.5:
+## tomcat8.5:
 ~~~bash
 chmod +x build-tomcat8.5.sh ; ./build-tomcat8.5.sh
 ~~~
-##tomcat9:
+## tomcat9:
 ~~~bash
 chmod +x build-tomcat9.sh ; ./build-tomcat9.sh
 ~~~

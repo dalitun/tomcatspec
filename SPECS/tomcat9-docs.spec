@@ -6,24 +6,24 @@
 %define tomcat_user tomcat
 
 Summary:    Apache Servlet/JSP Engine
-Name:       ulyaoth-tomcat9-docs
-Version:    9.0.8
+Name:       tomcat9-docs
+Version:    9.0.10
 Release:    1%{?dist}
 BuildArch: x86_64
 License:    Apache License version 2
 Group:      Applications/Internet
 URL:        http://tomcat.apache.org/
 Vendor:     Apache Software Foundation
-Packager:   Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net>
-Source0:    http://apache.mirrors.spacedump.net/tomcat/tomcat-9/v%{version}/bin/apache-tomcat-%{version}.tar.gz
+Packager:   your name <you email>
+Source0:    http://www.us.apache.org/dist/tomcat/tomcat-9/v%{version}/bin/apache-tomcat-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires: ulyaoth-tomcat9
+Requires: tomcat9
 
 Provides: tomcat-docs
 Provides: apache-tomcat-docs
-Provides: ulyaoth-tomcat-docs
-Provides: ulyaoth-tomcat9-docs
+Provides: tomcat-docs
+Provides: tomcat9-docs
 
 %description
 The package contains the official Apache Tomcat "webapps/docs" directory.
@@ -65,71 +65,14 @@ cp -R * %{buildroot}/%{tomcat_home}/
 cat <<BANNER
 ----------------------------------------------------------------------
 
-Thank you for using ulyaoth-tomcat9-docs!
+Thank you for using tomcat9-docs!
 
 Please find the official documentation for tomcat here:
 * http://tomcat.apache.org/
-
-For any additional help please visit our website at:
-* https://www.ulyaoth.net
-
-Ulyaoth repository could use your help! Please consider a donation:
-* https://www.ulyaoth.net/donate.html
 
 ----------------------------------------------------------------------
 BANNER
 
 %changelog
-* Wed May 23 2018 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net> 9.0.8-1
-- Updating to Tomcat 9.0.8.
-
-* Fri Jan 5 2018 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net> 9.0.2-1
-- Updating to Tomcat 9.0.2.
-
-* Wed Nov 15 2017 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net> 9.0.1-1
-- Updating to Tomcat 9.0.1.
-
-* Sat Jul 1 2017 Sjir Bagmeijer <sjir.bagmeijer@ulyaoth.net> 9.0.0-15
-- Updating to Tomcat 9.0.0.M22.
-
-* Sat May 20 2017 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-14
-- Updating to Tomcat 9.0.0.M21.
-
-* Sat Apr 22 2017 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-13
-- Updating to Tomcat 9.0.0.M20.
-
-* Sat Apr 8 2017 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-12
-- Updating to Tomcat 9.0.0.M19.
-
-* Fri Mar 17 2017 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-11
-- Updating to Tomcat 9.0.0.M18.
-
-* Mon Feb 13 2017 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-10
-- Updating to Tomcat 9.0.0.M17.
-
-* Sun Nov 13 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-9
-- Updating to Tomcat 9.0.0.M13.
-
-* Sat Oct 15 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-8
-- Updating to Tomcat 9.0.0.M11.
-
-* Sat Sep 10 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-7
-- Updating to Tomcat 9.0.0.M10.
-
-* Tue Jul 19 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-6
-- Updating to Tomcat 9.0.0.M9.
-
-* Thu Jun 16 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-5
-- Updating to Tomcat 9.0.0.M8.
-
-* Sat May 21 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-4
-- Updating to Tomcat 9.0.0.M6.
-
-* Fri Mar 18 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-3
-- Updating to Tomcat 9.0.0.M4.
-
-* Fri Feb 12 2016 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-2
-- Updating to Tomcat 9.0.0.M3.
-
-* Sat Nov 28 2015 Sjir Bagmeijer <sbagmeijer@ulyaoth.net> 9.0.0-1
-- Initial release for Tomcat 9.0.0.M1.
+* Wed May 23 2018 your name <your email> 9.0.10-1
+- Create Tomcat 9.0.10.
