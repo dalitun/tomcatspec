@@ -1,61 +1,55 @@
+# To Build:
+#
+# sudo yum -y install rpmdevtools && rpmdev-setuptree
+#
+# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.spec -O ~/rpmbuild/SPECS/tomcat8.spec
+# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.init -O ~/rpmbuild/SOURCES/tomcat8.init
+# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.sysconfig -O ~/rpmbuild/SOURCES/tomcat8.sysconfig
+# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.logrotate -O ~/rpmbuild/SOURCES/tomcat8.logrotate
+# wget http://www.motorlogy.com/apache/tomcat/tomcat-7/v7.0.55/bin/apache-tomcat-7.0.55.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-7.0.55.tar.gz
+# rpmbuild -bb ~/rpmbuild/SPECS/tomcat8.spec
 
 %define __jar_repack %{nil}
-%define debug_package %{nil}
-%define tomcat_home /opt/tomcat
-%define tomcat_group tomcat
-%define tomcat_user tomcat
+%define tomcat_home /usr/share/tomcat8
+%define tomcat_group tomcat8
+%define tomcat_user tomcat8
+%define tomcat_user_home /var/lib/tomcat8
+%define tomcat_cache_home /var/cache/tomcat8
 
-# distribution specific definitions
-%define use_systemd (0%{?fedora} && 0%{?fedora} >= 18) || (0%{?rhel} && 0%{?rhel} >= 7)
-
-%if 0%{?rhel}  == 6
-Requires(pre): shadow-utils
-Requires: initscripts >= 8.36
-Requires(post): chkconfig
-%endif
-
-%if 0%{?rhel}  == 7
-Requires(pre): shadow-utils
-Requires: systemd
-BuildRequires: systemd
-%endif
-
-%if 0%{?fedora} >= 18
-Requires(pre): shadow-utils
-Requires: systemd
-BuildRequires: systemd
-%endif
-
-# end of distribution specific definitions
-
-Summary:    Apache Servlet/JSP Engine
-Name:       tomcat8.5
-Version:    8.5.32
+Summary:    Boundless Server Apache Servlet/JSP Engine, RI for Servlet 3.1/JSP 2.3 API
+Name:       boundless-server-tomcat8
+Version:    8.5.31
 Release:    1%{?dist}
-BuildArch: x86_64
-License:    Apache License version 2
-Group:      Applications/Internet
-URL:        https://tomcat.apache.org/
-Vendor:     Apache Software Foundation
-Packager:   unkown@peaceofmind.com
-Source0:    http://www.us.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
-Source1:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat.service
-Source2:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat.logrotate
-BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
-
-Provides: tomcat
-Provides: apache-tomcat
-Provides: tomcat
-Provides: tomcat8.5
+BuildArch:  x86_64
+License:    Apache Software License
+Group:      Networking/Daemons
+URL:        http://tomcat.apache.org/
+Source0:    apache-tomcat-%{version}.tar.gz
+Source1:    tomcat8.service
+Source2:    tomcat8.sysconfig
+Source3:    tomcat8.logrotate
+Source4:    tomcat8.conf
+Requires:   java-1.8.0-openjdk
+#Requires:  java-1.8.0-headless
+Requires:   redhat-lsb-core
+Obsoletes:  suite-tomcat8
+Conflicts:  tomcat, tomcat7, tomcat8, opengeo-tomcat, suite-tomcat8
+BuildRoot:  %{_tmppath}/tomcat8-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies. The Java Servlet and JavaServer Pages specifications are developed under the Java Community Process.
+Tomcat is the servlet container that is used in the official Reference
+Implementation for the Java Servlet and JavaServer Pages technologies.
+The Java Servlet and JavaServer Pages specifications are developed by
+Sun under the Java Community Process.
 
-Apache Tomcat is developed in an open and participatory environment and released under the Apache License version 2. Apache Tomcat is intended to be a collaboration of the best-of-breed developers from around the world. We invite you to participate in this open development project. To learn more about getting involved, click here.
+Tomcat is developed in an open and participatory environment and
+released under the Apache Software License. Tomcat is intended to be
+a collaboration of the best-of-breed developers from around the world.
+We invite you to participate in this open development project. To
+learn more about getting involved, click here.
 
-Apache Tomcat powers numerous large-scale, mission-critical web applications across a diverse range of industries and organizations. Some of these users and their stories are listed on the PoweredBy wiki page.
-
-Apache Tomcat, Tomcat, Apache, the Apache feather, and the Apache Tomcat project logo are trademarks of the Apache Software Foundation.
+This package contains the base tomcat installation that depends on Sun's JDK and not
+on JPP packages. This package has been modified for Boundless Server.
 
 %prep
 %setup -q -n apache-tomcat-%{version}
@@ -66,97 +60,114 @@ Apache Tomcat, Tomcat, Apache, the Apache feather, and the Apache Tomcat project
 install -d -m 755 %{buildroot}/%{tomcat_home}/
 cp -R * %{buildroot}/%{tomcat_home}/
 
-# Put logging in /var/log and link back.
-rm -rf %{buildroot}/%{tomcat_home}/logs
-install -d -m 755 %{buildroot}/var/log/tomcat/
+# Remove all webapps. Put webapps in /var/lib and link back.
+rm -rf %{buildroot}/%{tomcat_home}/webapps
+install -d -m 775 %{buildroot}%{tomcat_user_home}/webapps
 cd %{buildroot}/%{tomcat_home}/
-ln -s /var/log/tomcat/ logs
+ln -s %{tomcat_user_home}/webapps webapps
+chmod 775 %{buildroot}/%{tomcat_user_home}
 cd -
 
-%if %{use_systemd}
-# install systemd-specific files
-%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
-%{__install} -m644 %SOURCE1 \
-        $RPM_BUILD_ROOT%{_unitdir}/tomcat.service
-%endif
+# Remove *.bat
+rm -f %{buildroot}/%{tomcat_home}/bin/*.bat
 
-# install log rotation stuff
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-%{__install} -m 644 -p %{SOURCE2} \
-   $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/tomcat
+# Remove extra logging configs
+sed -i -e '/^3manager/d' -e '/\[\/manager\]/d' \
+    -e '/^4host-manager/d' -e '/\[\/host-manager\]/d' \
+    -e '/^java.util.logging.ConsoleHandler/d' \
+    -e 's/, *java.util.logging.ConsoleHandler//' \
+    -e 's/, *4host-manager.org.apache.juli.AsyncFileHandler//' \
+    -e 's/, *3manager.org.apache.juli.AsyncFileHandler//' \
+    %{buildroot}/%{tomcat_home}/conf/logging.properties
 
-# Clean webapps
-%{__rm} -rf %{buildroot}/%{tomcat_home}/webapps/*
+# Put logging in /var/log and link back.
+rm -rf %{buildroot}/%{tomcat_home}/logs
+install -d -m 755 %{buildroot}/var/log/tomcat8/
+cd %{buildroot}/%{tomcat_home}/
+ln -s /var/log/tomcat8/ logs
+cd -
+
+# Put conf in /etc/ and link back.
+install -d -m 755 %{buildroot}/%{_sysconfdir}
+mv %{buildroot}/%{tomcat_home}/conf %{buildroot}/%{_sysconfdir}/tomcat8
+mkdir %{buildroot}/%{_sysconfdir}/tomcat8/server-opts
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{_sysconfdir}/tomcat8 conf
+cd -
+
+# Put temp and work to /var/cache and link back.
+install -d -m 775 %{buildroot}%{tomcat_cache_home}
+mv %{buildroot}/%{tomcat_home}/temp %{buildroot}/%{tomcat_cache_home}/
+mv %{buildroot}/%{tomcat_home}/work %{buildroot}/%{tomcat_cache_home}/
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_cache_home}/temp
+ln -s %{tomcat_cache_home}/work
+chmod 775 %{buildroot}/%{tomcat_cache_home}/temp
+chmod 775 %{buildroot}/%{tomcat_cache_home}/work
+cd -
+
+# Drop sbin script
+install -d -m 755 %{buildroot}/%{_sbindir}
+install    -m 755 %_sourcedir/tomcat8.bin %{buildroot}/%{_sbindir}/tomcat8
+
+# Drop init script
+install -d -m 755 %{buildroot}/%{_initrddir}
+install    -m 755 %_sourcedir/tomcat8.init %{buildroot}/%{_initrddir}/tomcat8
+
+# Drop sysconfig script
+install -d -m 755 %{buildroot}/%{_sysconfdir}/sysconfig/
+install    -m 644 %_sourcedir/tomcat8.sysconfig %{buildroot}/%{_sysconfdir}/sysconfig/tomcat8
+
+# Drop conf script
+install    -m 644 %_sourcedir/tomcat8.conf %{buildroot}/%{_sysconfdir}/tomcat8
+
+# Drop logrotate script
+install -d -m 755 %{buildroot}/%{_sysconfdir}/logrotate.d
+install    -m 644 %_sourcedir/tomcat8.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/tomcat8
 
 %clean
-%{__rm} -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %pre
+mkdir -p /var/lock/subsys/
+if [ ! -f /sbin/chkconfig ] && [ ! -f /usr/sbin/update-rc.d ]; then
+  echo "Service handler not found, abort"
+  exit 1
+fi
 getent group %{tomcat_group} >/dev/null || groupadd -r %{tomcat_group}
-getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat Daemon User" --shell /bin/bash -M -r -g %{tomcat_group} --home %{tomcat_home} %{tomcat_user}
+getent passwd %{tomcat_user} >/dev/null || /usr/sbin/useradd --comment "Tomcat 8 Daemon User" --shell /bin/bash -M -r -g %{tomcat_group} --home %{tomcat_home} %{tomcat_user}
 
 %files
 %defattr(-,%{tomcat_user},%{tomcat_group})
-%{tomcat_home}/*
-%dir %{tomcat_home}
-%dir %{_localstatedir}/log/tomcat
-%config(noreplace) %{tomcat_home}/conf/web.xml
-%config(noreplace) %{tomcat_home}/conf/tomcat-users.xml
-%config(noreplace) %{tomcat_home}/conf/server.xml
-%config(noreplace) %{tomcat_home}/conf/logging.properties
-%config(noreplace) %{tomcat_home}/conf/context.xml
-%config(noreplace) %{tomcat_home}/conf/catalina.properties
-%config(noreplace) %{tomcat_home}/conf/catalina.policy
-
+/var/log/tomcat8/
+%defattr(-,tomcat8,tomcat8)
+%{tomcat_user_home}
+%{tomcat_home}
 %defattr(-,root,root)
-%config(noreplace) %{_sysconfdir}/logrotate.d/tomcat
-%if %{use_systemd}
-%{_unitdir}/tomcat.service
-%else
-%{_initrddir}/tomcat
-%endif
-
+%{_initrddir}/tomcat8
+%{_sbindir}/tomcat8
+%{_sysconfdir}/logrotate.d/tomcat8
+%defattr(-,root,%{tomcat_group})
+%{tomcat_cache_home}
+%{tomcat_cache_home}/temp
+%{tomcat_cache_home}/work
+%{tomcat_user_home}/webapps
+%config(noreplace) %{_sysconfdir}/sysconfig/tomcat8
+%defattr(-,tomcat8,tomcat8)
+%config(noreplace) %{_sysconfdir}/tomcat8/*
 
 %post
-# Register the tomcat service
-if [ $1 -eq 1 ]; then
-%if %{use_systemd}
-    /usr/bin/systemctl preset tomcat.service >/dev/null 2>&1 ||:
-%else
-    /sbin/chkconfig --add tomcat
-%endif
+%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
+%{__install} -m644 %SOURCE1 \
+        $RPM_BUILD_ROOT%{_unitdir}/tomcat8.service
 
-cat <<BANNER
-----------------------------------------------------------------------
-
-Thank you for using tomcat8.5!
-
-Please find the official documentation for tomcat here:
-* https://tomcat.apache.org/
-
-----------------------------------------------------------------------
-BANNER
-fi
+chown -R tomcat8:tomcat8 /etc/tomcat8
 
 %preun
-if [ $1 -eq 0 ]; then
-%if %use_systemd
-    /usr/bin/systemctl --no-reload disable tomcat.service >/dev/null 2>&1 ||:
-    /usr/bin/systemctl stop tomcat.service >/dev/null 2>&1 ||:
-%else
-    /sbin/service tomcat stop > /dev/null 2>&1
-    /sbin/chkconfig --del tomcat
-%endif
-fi
+# Register the tomcat service
+/usr/bin/systemctl preset tomcat.service >/dev/null 2>&1 ||:
 
 %postun
-%if %use_systemd
-/usr/bin/systemctl daemon-reload >/dev/null 2>&1 ||:
-%endif
-if [ $1 -ge 1 ]; then
-    /sbin/service tomcat status  >/dev/null 2>&1 || exit 0
-fi
+#/usr/bin/systemctl restart tomcat.service >/dev/null 2>&1
 
 %changelog
-* Sat Nov 28 2015 your name <email> 8.5.32-1
-- Initial release for Tomcat 8.5.32.

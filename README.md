@@ -5,10 +5,7 @@
 ~~~bash
 chmod +x build-tomcat8.5.sh ; ./build-tomcat8.5.sh
 ~~~
-## tomcat9:
-~~~bash
-chmod +x build-tomcat9.sh ; ./build-tomcat9.sh
-~~~
+
 This should give you the following packages:
 tomcat
 tomcat-admin

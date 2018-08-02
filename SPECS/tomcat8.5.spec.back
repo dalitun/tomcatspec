@@ -1,18 +1,19 @@
 
 %define __jar_repack %{nil}
 %define debug_package %{nil}
-%define tomcat_home /opt/tomcat
-%define tomcat_group tomcat
-%define tomcat_user tomcat
+
+%define tomcat_home /usr/share/tomcat8
+%define tomcat_user_home /var/lib/tomcat8
+%define tomcat_cache_home /var/cache/tomcat8
+%define tomcat_conf /etc/tomcat8
+%define tomcat_cache_home /var/cache/tomcat8
+
+%define tomcat_group tomcat8
+%define tomcat_user tomcat8
 
 # distribution specific definitions
 %define use_systemd (0%{?fedora} && 0%{?fedora} >= 18) || (0%{?rhel} && 0%{?rhel} >= 7)
 
-%if 0%{?rhel}  == 6
-Requires(pre): shadow-utils
-Requires: initscripts >= 8.36
-Requires(post): chkconfig
-%endif
 
 %if 0%{?rhel}  == 7
 Requires(pre): shadow-utils
@@ -29,24 +30,26 @@ BuildRequires: systemd
 # end of distribution specific definitions
 
 Summary:    Apache Servlet/JSP Engine
-Name:       tomcat9
-Version:    9.0.10
+Name:       tomcat8.5
+Version:    8.5.32
 Release:    1%{?dist}
-BuildArch: x86_64
+BuildArch:  x86_64
 License:    Apache License version 2
 Group:      Applications/Internet
-URL:        http://tomcat.apache.org/
+URL:        https://tomcat.apache.org/
 Vendor:     Apache Software Foundation
-Packager:   your name <you email>
-Source0:    http://www.us.apache.org/dist/tomcat/tomcat-9/v%{version}/bin/apache-tomcat-%{version}.tar.gz
-Source1:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat.service
-Source2:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/SOURCES/tomcat.logrotate
+Packager:   unkown@peaceofmind.com
+Source0:    http://www.us.apache.org/dist/tomcat/tomcat-8/v%{version}/bin/apache-tomcat-%{version}.tar.gz
+Source1:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat8.service
+Source2:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat8.logrotate
+Source3:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat8.conf
+Source4:    https://raw.githubusercontent.com/dalitun/tomcatspec/master/SOURCES/tomcat8.sysconfig
 BuildRoot:  %{_tmppath}/tomcat-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Provides: tomcat
 Provides: apache-tomcat
 Provides: tomcat
-Provides: tomcat9
+Provides: tomcat8.5
 
 %description
 Apache Tomcat is an open source software implementation of the Java Servlet and JavaServer Pages technologies. The Java Servlet and JavaServer Pages specifications are developed under the Java Community Process.
@@ -66,19 +69,54 @@ Apache Tomcat, Tomcat, Apache, the Apache feather, and the Apache Tomcat project
 install -d -m 755 %{buildroot}/%{tomcat_home}/
 cp -R * %{buildroot}/%{tomcat_home}/
 
+
+
+# Remove all webapps. Put webapps in /var/lib and link back.
+rm -rf %{buildroot}/%{tomcat_home}/webapps
+install -d -m 775 %{buildroot}%{tomcat_user_home}/webapps
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_user_home}/webapps webapps
+chmod 775 %{buildroot}/%{tomcat_user_home}
+cd -
+
+
 # Put logging in /var/log and link back.
 rm -rf %{buildroot}/%{tomcat_home}/logs
-install -d -m 755 %{buildroot}/var/log/tomcat/
+install -d -m 755 %{buildroot}/var/log/tomcat8/
 cd %{buildroot}/%{tomcat_home}/
-ln -s /var/log/tomcat/ logs
+ln -s /var/log/tomcat8/ logs
 cd -
+
+
+
+# Put conf in /etc/tomcat8
+install -d -m 755 %{buildroot}/%{tomcat_conf}
+mv %{buildroot}/%{tomcat_home}/conf %{buildroot}/%{tomcat_conf}/
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_conf} conf
+chmod 775 %{buildroot}/%{tomcat_conf}
+cd -
+
+
+# Put temp and work to /var/cache and link back.
+install -d -m 775 %{buildroot}%{tomcat_cache_home}
+mv %{buildroot}/%{tomcat_home}/temp %{buildroot}/%{tomcat_cache_home}/
+mv %{buildroot}/%{tomcat_home}/work %{buildroot}/%{tomcat_cache_home}/
+cd %{buildroot}/%{tomcat_home}/
+ln -s %{tomcat_cache_home}/temp
+ln -s %{tomcat_cache_home}/work
+chmod 775 %{buildroot}/%{tomcat_cache_home}/temp
+chmod 775 %{buildroot}/%{tomcat_cache_home}/work
+cd -
+
+
+
 
 %if %{use_systemd}
 # install systemd-specific files
 %{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
 %{__install} -m644 %SOURCE1 \
-        $RPM_BUILD_ROOT%{_unitdir}/tomcat.service
-
+        $RPM_BUILD_ROOT%{_unitdir}/tomcat8.service
 %endif
 
 # install log rotation stuff
@@ -130,10 +168,10 @@ if [ $1 -eq 1 ]; then
 cat <<BANNER
 ----------------------------------------------------------------------
 
-Thank you for using tomcat9!
+Thank you for using tomcat8.5!
 
 Please find the official documentation for tomcat here:
-* http://tomcat.apache.org/
+* https://tomcat.apache.org/
 
 ----------------------------------------------------------------------
 BANNER
@@ -159,5 +197,5 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
-* Wed May 23 2018 your name <your email> 9.0.10-1
-- Create Tomcat 9.0.10.
+* Sat Nov 28 2015 your name <email> 8.5.32-1
+- Initial release for Tomcat 8.5.32.
